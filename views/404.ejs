@@ -1,0 +1,13 @@
+<%- include('partials/cabecalho') %>
+
+<section class="cartao centro">
+  <p class="codigo-erro" aria-hidden="true">404</p>
+  <h1>Página não encontrada</h1>
+  <p>O endereço <code><%= caminho %></code> não existe no VigiaChuva.</p>
+  <div class="acoes acoes--centro">
+    <a class="botao" href="/">Registrar ocorrência</a>
+    <a class="botao botao--secundario" href="/ocorrencias">Ver ocorrências</a>
+  </div>
+</section>
+
+<%- include('partials/rodape') %>

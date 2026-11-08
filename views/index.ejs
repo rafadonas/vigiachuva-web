@@ -1,0 +1,94 @@
+<%- include('partials/cabecalho') %>
+
+<section class="intro" aria-labelledby="intro-titulo">
+  <h1 id="intro-titulo">Alagamentos não avisam. A comunidade pode.</h1>
+  <div class="intro__grade">
+    <article>
+      <h2>Problema</h2>
+      <p>Em dias de chuva forte, ruas alagadas, bueiros entupidos e córregos transbordando bloqueiam a passagem, invadem casas e colocam pessoas em risco. Quem vive no bairro sabe onde isso acontece, mas essa informação se perde em conversas e não vira dado para planejar a manutenção.</p>
+    </article>
+    <article>
+      <h2>Público-alvo</h2>
+      <p>Moradores e lideranças comunitárias de áreas sujeitas a alagamento, que registram e consultam as ocorrências, e equipes de zeladoria e Defesa Civil do município, que precisam decidir onde atender primeiro.</p>
+    </article>
+    <article>
+      <h2>Objetivo</h2>
+      <p>Reunir os registros em um só lugar, classificar a prioridade por regras transparentes e gerar indicadores que mostrem quais problemas se repetem e quais bairros precisam de atenção.</p>
+    </article>
+    <article>
+      <h2>ODS relacionados</h2>
+      <p><strong>ODS 11, Cidades e Comunidades Sustentáveis</strong> (meta 11.5: reduzir mortes e pessoas afetadas por catástrofes, inclusive as relacionadas à água) e <strong>ODS 13, Ação Contra a Mudança Global do Clima</strong> (meta 13.1: reforçar a resiliência a riscos climáticos).</p>
+    </article>
+  </div>
+</section>
+
+<section class="cartao" aria-labelledby="form-titulo">
+  <h2 id="form-titulo">Registrar ocorrência</h2>
+  <p class="dica">Campos com <span aria-hidden="true">*</span><span class="sr">asterisco</span> são obrigatórios. Não informe nomes, telefones nem números de casa: o registro descreve o local, não pessoas.</p>
+
+  <% if (Object.keys(erros).length > 0) { %>
+    <div class="aviso aviso--erro" role="alert">
+      <strong>Não foi possível salvar.</strong> Corrija <%= Object.keys(erros).length === 1 ? 'o campo destacado' : 'os ' + Object.keys(erros).length + ' campos destacados' %> abaixo.
+    </div>
+  <% } %>
+
+  <form action="/ocorrencias" method="POST" novalidate class="formulario">
+    <div class="campo <%= erros.tipo ? 'campo--erro' : '' %>">
+      <label for="tipo">Categoria *</label>
+      <select id="tipo" name="tipo" required<%- erros.tipo ? ' aria-invalid="true" aria-describedby="tipo-erro"' : '' %>>
+        <option value="">Selecione...</option>
+        <% TIPOS.forEach(function (t) { %>
+          <option value="<%= t %>" <%= valores.tipo === t ? 'selected' : '' %>><%= t %></option>
+        <% }) %>
+      </select>
+      <% if (erros.tipo) { %><p class="campo__erro" id="tipo-erro"><%= erros.tipo %></p><% } %>
+    </div>
+
+    <div class="campo <%= erros.bairro ? 'campo--erro' : '' %>">
+      <label for="bairro">Bairro *</label>
+      <input id="bairro" name="bairro" type="text" maxlength="60" required value="<%= valores.bairro || '' %>"<%- erros.bairro ? ' aria-invalid="true" aria-describedby="bairro-erro"' : '' %> placeholder="Ex.: Jardim Helena">
+      <% if (erros.bairro) { %><p class="campo__erro" id="bairro-erro"><%= erros.bairro %></p><% } %>
+    </div>
+
+    <div class="campo <%= erros.pontoReferencia ? 'campo--erro' : '' %>">
+      <label for="pontoReferencia">Ponto de referência</label>
+      <input id="pontoReferencia" name="pontoReferencia" type="text" maxlength="100" value="<%= valores.pontoReferencia || '' %>"<%- erros.pontoReferencia ? ' aria-invalid="true" aria-describedby="ref-erro"' : '' %> placeholder="Ex.: esquina da escola estadual">
+      <% if (erros.pontoReferencia) { %><p class="campo__erro" id="ref-erro"><%= erros.pontoReferencia %></p><% } %>
+    </div>
+
+    <div class="campo <%= erros.nivelAgua ? 'campo--erro' : '' %>">
+      <label for="nivelAgua">Nível da água *</label>
+      <select id="nivelAgua" name="nivelAgua" required<%- erros.nivelAgua ? ' aria-invalid="true" aria-describedby="nivel-erro"' : '' %>>
+        <option value="">Selecione...</option>
+        <% NIVEIS_AGUA.forEach(function (n) { %>
+          <option value="<%= n %>" <%= valores.nivelAgua === n ? 'selected' : '' %>><%= n %></option>
+        <% }) %>
+      </select>
+      <% if (erros.nivelAgua) { %><p class="campo__erro" id="nivel-erro"><%= erros.nivelAgua %></p><% } %>
+    </div>
+
+    <div class="campo <%= erros.dataOcorrencia ? 'campo--erro' : '' %>">
+      <label for="dataOcorrencia">Data da ocorrência *</label>
+      <input id="dataOcorrencia" name="dataOcorrencia" type="date" max="<%= hoje %>" required value="<%= valores.dataOcorrencia !== undefined ? valores.dataOcorrencia : hoje %>"<%- erros.dataOcorrencia ? ' aria-invalid="true" aria-describedby="data-erro"' : '' %>>
+      <% if (erros.dataOcorrencia) { %><p class="campo__erro" id="data-erro"><%= erros.dataOcorrencia %></p><% } %>
+    </div>
+
+    <div class="campo campo--marcar">
+      <input id="viaIntransitavel" name="viaIntransitavel" type="checkbox" value="sim" <%= valores.viaIntransitavel === 'sim' ? 'checked' : '' %>>
+      <label for="viaIntransitavel">A via está intransitável para carros ou pedestres</label>
+    </div>
+
+    <div class="campo campo--largo <%= erros.descricao ? 'campo--erro' : '' %>">
+      <label for="descricao">Descrição *</label>
+      <textarea id="descricao" name="descricao" rows="4" minlength="10" maxlength="500" required<%- erros.descricao ? ' aria-invalid="true" aria-describedby="descricao-erro"' : '' %> placeholder="O que está acontecendo? Desde quando? Há risco para quem passa?"><%= valores.descricao || '' %></textarea>
+      <% if (erros.descricao) { %><p class="campo__erro" id="descricao-erro"><%= erros.descricao %></p><% } %>
+    </div>
+
+    <div class="acoes">
+      <button type="submit" class="botao">Registrar ocorrência</button>
+      <a class="botao botao--secundario" href="/ocorrencias">Ver ocorrências</a>
+    </div>
+  </form>
+</section>
+
+<%- include('partials/rodape') %>

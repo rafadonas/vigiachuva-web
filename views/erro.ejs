@@ -1,0 +1,12 @@
+<%- include('partials/cabecalho') %>
+
+<section class="cartao centro">
+  <p class="codigo-erro" aria-hidden="true"><%= codigo %></p>
+  <h1><%= titulo %></h1>
+  <div class="aviso aviso--erro" role="alert"><%= mensagem %></div>
+  <div class="acoes acoes--centro">
+    <a class="botao" href="/">Voltar ao início</a>
+  </div>
+</section>
+
+<%- include('partials/rodape') %>

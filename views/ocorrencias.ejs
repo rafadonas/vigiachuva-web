@@ -1,0 +1,135 @@
+<%- include('partials/cabecalho') %>
+<%
+  const formatarData = (d) => new Date(d).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+  const classePrioridade = (p) => ({ 'Alta': 'alta', 'Média': 'media', 'Baixa': 'baixa' })[p];
+  const altas = indicadores.porPrioridade.find((p) => p.prioridade === 'Alta');
+%>
+
+<% if (criada) { %>
+  <div class="aviso aviso--sucesso" role="status">
+    <strong>Ocorrência registrada com sucesso.</strong>
+    Prioridade calculada: <span class="selo selo--<%= classePrioridade(criada.prioridade) %>"><%= criada.prioridade %></span>
+    (<%= criada.motivoPrioridade %>).
+  </div>
+<% } %>
+
+<h1>Ocorrências e indicadores</h1>
+
+<section aria-labelledby="ind-titulo">
+  <h2 id="ind-titulo" class="sr">Indicadores</h2>
+  <div class="indicadores">
+    <div class="indicador">
+      <span class="indicador__valor"><%= indicadores.total %></span>
+      <span class="indicador__rotulo">ocorrências registradas no total</span>
+    </div>
+    <div class="indicador indicador--alerta">
+      <span class="indicador__valor"><%= altas.quantidade %></span>
+      <span class="indicador__rotulo">de prioridade Alta (<%= altas.percentual %>% do total)</span>
+    </div>
+    <div class="indicador">
+      <span class="indicador__valor"><%= indicadores.ultimos7Dias %></span>
+      <span class="indicador__rotulo">ocorridas nos últimos 7 dias</span>
+    </div>
+  </div>
+
+  <div class="paineis">
+    <article class="cartao">
+      <h3>Resumo por prioridade</h3>
+      <ul class="barras">
+        <% indicadores.porPrioridade.forEach(function (p) { %>
+          <li>
+            <span class="barras__rotulo"><%= p.prioridade %></span>
+            <span class="barras__trilho" aria-hidden="true"><span class="barras__barra barras__barra--<%= classePrioridade(p.prioridade) %>" style="width: <%= p.percentual %>%"></span></span>
+            <span class="barras__valor"><%= p.quantidade %> (<%= p.percentual %>%)</span>
+          </li>
+        <% }) %>
+      </ul>
+    </article>
+
+    <article class="cartao">
+      <h3>Resumo por categoria</h3>
+      <ul class="barras">
+        <% indicadores.porTipo.forEach(function (t) { %>
+          <li>
+            <span class="barras__rotulo"><%= t.tipo %></span>
+            <span class="barras__trilho" aria-hidden="true"><span class="barras__barra" style="width: <%= t.percentual %>%"></span></span>
+            <span class="barras__valor"><%= t.quantidade %></span>
+          </li>
+        <% }) %>
+      </ul>
+    </article>
+
+    <article class="cartao">
+      <h3>Bairros que pedem atenção</h3>
+      <p class="dica">Bairros com mais ocorrências de prioridade Alta.</p>
+      <% if (indicadores.bairrosAtencao.length === 0) { %>
+        <p>Nenhuma ocorrência de prioridade Alta até agora.</p>
+      <% } else { %>
+        <ol class="ranking">
+          <% indicadores.bairrosAtencao.forEach(function (b) { %>
+            <li><strong><%= b.bairro %></strong>: <%= b.quantidade %> <%= b.quantidade === 1 ? 'ocorrência' : 'ocorrências' %></li>
+          <% }) %>
+        </ol>
+      <% } %>
+    </article>
+  </div>
+</section>
+
+<section class="cartao" aria-labelledby="lista-titulo">
+  <h2 id="lista-titulo">Registros</h2>
+
+  <form class="filtros" method="GET" action="/ocorrencias">
+    <div class="campo">
+      <label for="f-tipo">Categoria</label>
+      <select id="f-tipo" name="tipo">
+        <option value="">Todas</option>
+        <% TIPOS.forEach(function (t) { %><option value="<%= t %>" <%= filtros.tipo === t ? 'selected' : '' %>><%= t %></option><% }) %>
+      </select>
+    </div>
+    <div class="campo">
+      <label for="f-prioridade">Prioridade</label>
+      <select id="f-prioridade" name="prioridade">
+        <option value="">Todas</option>
+        <% PRIORIDADES.forEach(function (p) { %><option value="<%= p %>" <%= filtros.prioridade === p ? 'selected' : '' %>><%= p %></option><% }) %>
+      </select>
+    </div>
+    <div class="acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <a href="/ocorrencias" class="botao botao--secundario">Limpar</a>
+    </div>
+  </form>
+
+  <% if (ocorrencias.length === 0) { %>
+    <p class="vazio">Nenhuma ocorrência encontrada<%= Object.keys(filtros).length ? ' com esses filtros' : '' %>. <a href="/">Registre a primeira.</a></p>
+  <% } else { %>
+    <p class="dica"><%= ocorrencias.length %> <%= ocorrencias.length === 1 ? 'registro exibido' : 'registros exibidos' %>, do mais recente para o mais antigo.</p>
+    <div class="tabela-rolagem">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Data</th>
+            <th scope="col">Prioridade</th>
+            <th scope="col">Categoria</th>
+            <th scope="col">Bairro</th>
+            <th scope="col">Nível da água</th>
+            <th scope="col">Descrição</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% ocorrencias.forEach(function (o) { %>
+            <tr class="<%= criada && String(criada._id) === String(o._id) ? 'linha--nova' : '' %>">
+              <td><%= formatarData(o.dataOcorrencia) %></td>
+              <td><span class="selo selo--<%= classePrioridade(o.prioridade) %>" title="<%= o.motivoPrioridade %>"><%= o.prioridade %></span><span class="motivo"><%= o.motivoPrioridade %></span></td>
+              <td><%= o.tipo %></td>
+              <td><%= o.bairro %><% if (o.pontoReferencia) { %><span class="motivo"><%= o.pontoReferencia %></span><% } %></td>
+              <td><%= o.nivelAgua %><% if (o.viaIntransitavel) { %><span class="motivo">Via intransitável</span><% } %></td>
+              <td><%= o.descricao %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/rodape') %>
