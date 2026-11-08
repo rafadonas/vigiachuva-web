@@ -1,0 +1,36 @@
+{
+  "name": "vigiachuva-web",
+  "version": "1.0.0",
+  "description": "VigiaChuva Web: registro comunitário de ocorrências de alagamento e drenagem urbana (Global Solution 2026.2, FIAP, Application Development).",
+  "main": "src/server.js",
+  "private": true,
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node scripts/seed.js",
+    "demo": "node scripts/demo-memoria.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "citizentech",
+    "express",
+    "mongodb",
+    "alagamento",
+    "ods11",
+    "ods13"
+  ],
+  "license": "UNLICENSED",
+  "dependencies": {
+    "dotenv": "^17.2.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "mongoose": "^8.18.0"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^10.2.0",
+    "supertest": "^7.1.0"
+  }
+}
