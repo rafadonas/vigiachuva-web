@@ -4,7 +4,7 @@ Protótipo web para registrar e acompanhar ocorrências de alagamento e drenagem
 Global Solution 2026.2, FIAP, Application Development (Prof. Allan Roberto Molto), desafio CitizenTech.
 
 **Integrantes:** Rafael do Nascimento Silva, RM 566263 · Guilherme Morais de Assis, RM 564198
-**Vídeo pitch:** [link do YouTube] (2 min 57 s, legendado; o arquivo gravado acompanha a entrega como `VigiaChuva_pitch_AD.mp4`)
+**Vídeo pitch:** [YouTube](https://youtu.be/N1baXNlel8Q) (2 min 57 s, legendado; o arquivo gravado acompanha a entrega como `VigiaChuva_pitch_AD.mp4`)
 
 ## Problema, público-alvo e objetivo
 - **Problema:** em chuvas fortes, ruas alagadas, bueiros entupidos e córregos transbordando bloqueiam a passagem e põem pessoas em risco. Quem mora no bairro sabe onde isso acontece, mas a informação se perde em conversas e não vira dado para planejar a manutenção.
